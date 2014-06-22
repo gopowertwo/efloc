@@ -1,6 +1,6 @@
 package com.example.efficientlocalization;
 
-/*
+/**
  * @author Georgi Zlatkov
  */
 

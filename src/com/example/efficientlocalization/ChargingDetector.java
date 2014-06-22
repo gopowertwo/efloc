@@ -15,12 +15,12 @@ import android.os.BatteryManager;
 
 public class ChargingDetector {
 
-	private static final int INDOORS = 1;
-	private static final int OUTDOORS = 0;
-	
+	private static final int PLUGGED_AC = 1;
+	private static final int PLUGGED_USB = 0;
+	private static final int BATTERY = -1;
+
 	private Environment env;
 	private Context context;
-	private PowerUtil power = new PowerUtil();
 
 	public ChargingDetector(Context myContext) {
 		this.context = myContext;
@@ -29,26 +29,39 @@ public class ChargingDetector {
 
 	public Environment getDecison() {
 
-		if (power.isCharging(context)) {
-			env.setIndoors(INDOORS);
-			env.setOutdoors(OUTDOORS);
+		int result = isCharging(context);
+		
+		if (result == PLUGGED_AC) {
+			env.setIndoors(1);
+			env.setOutdoors(-1);
+		} else if (result == PLUGGED_USB) {
+			env.setIndoors(0);
+			env.setOutdoors(0);
 		} else {
 			env.setIndoors(-1);
 			env.setOutdoors(-1);
 		}
 		return env;
 	}
+	
+	public int isCharging(Context context) {
+		Intent intent = context.registerReceiver(null, new IntentFilter(
+				Intent.ACTION_BATTERY_CHANGED));
+		int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+
+		if (plugged == BatteryManager.BATTERY_PLUGGED_AC) {
+			return PLUGGED_AC;
+		} else if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+			return PLUGGED_USB;
+		} else {
+			return BATTERY;
+		}
+
+	}
 
 	// Check for both AC and USB charging
-	// Could be improved to check if USB is outdoors(laptop/remote batteries)
 	class PowerUtil {
-		public boolean isCharging(Context context) {
-			Intent intent = context.registerReceiver(null, new IntentFilter(
-					Intent.ACTION_BATTERY_CHANGED));
-			int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-			return plugged == BatteryManager.BATTERY_PLUGGED_AC
-					|| plugged == BatteryManager.BATTERY_PLUGGED_USB;
-		}
+		
 	}
 
 }

@@ -38,7 +38,6 @@ public class AccelerometerDetector implements SensorEventListener {
 	public AccelerometerDetector(SensorManager mySensorManager,
 			Context myContext) {
 		this.mySensorManager = mySensorManager;
-		//this.myContext = myContext;
 
 		myAccelerometer = this.mySensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);

@@ -51,6 +51,7 @@ public class LightDetector implements SensorEventListener {
 		}
 	}
 
+	// [TODO] Replace static hours with dynamic one
 	public Environment getDecison() {
 		if (this.proximity == 0) {
 			env.setIndoors(-1);
